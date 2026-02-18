@@ -9,7 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
 import Signup from "./Signup";
 import "./index.css";
-import "./app.css";
+import "./App.css";
 const TodoDetails = lazy(() => import("./TodoDetails"));//this loads a particular task details page only when it's needed, which makes this app faster to load.
 const Profile = lazy(() => import("./Profile"));
 
