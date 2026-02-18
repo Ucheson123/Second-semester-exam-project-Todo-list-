@@ -38,13 +38,13 @@ Here are the tools I chose to use for this project and why:
 [//]: # (Note: Make sure to put your actual screenshots in a folder named 'screenshots' before you push this to GitHub)
 
 * Login Screen: 
-![Login Screen](./screenshots/login.png)
+![Login Screen](./src/screenshots/login.png)
 
 * Task Dashboard: 
-![Dashboard](./screenshots/dashboard.png)
+![Dashboard](./src/screenshots/dashboard.png)
 
 * Task Details Page: 
-![Task Details](./screenshots/details.png)
+![Task Details](./src/screenshots/details.png)
 
 ## Known issues and future improvements
 Known Issues:
