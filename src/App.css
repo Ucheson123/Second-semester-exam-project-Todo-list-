@@ -1,0 +1,208 @@
+/* GLOBAL RESETS */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #f4f7f6;
+  color: #333;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/*  TYPOGRAPHY */
+h1, h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* LAYOUT CONTAINERS */
+.app-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.section-divider {
+  border: 0;
+  height: 1px;
+  background: #eee;
+  margin: 30px 0;
+}
+
+/* -FORMS & INPUTS */
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+}
+
+/*  BUTTONS */
+button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #1a252f;
+}
+
+button:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+}
+
+/* TASK LIST */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border-left: 4px solid #3498db;
+}
+
+.task-item.completed {
+  border-left-color: #2ecc71;
+  opacity: 0.7;
+}
+
+.task-status-badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background: #eee;
+  color: #555;
+}
+
+.task-status-badge.done {
+  background: #d5f5e3;
+  color: #27ae60;
+}
+
+/* PAGINATION */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* TASK DETAILS PAGE */
+.details-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.details-card p {
+  margin-bottom: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action-buttons button {
+  background-color: #e74c3c; /* Red for delete */
+}
+.action-buttons button:first-child {
+  background-color: #f39c12; /* Orange for edit */
+}
+
+.profile-nav {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
+/*DESKTOP RESPONSIVE DESIGN (MOBILE-FIRST)*/
+@media (min-width: 768px) {
+  body {
+    padding: 40px;
+  }
+  
+  .app-container {
+    padding: 40px;
+  }
+  
+  /* Make the Add Task form display inline on larger screens */
+  .inline-form {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+  
+  .inline-form .form-group {
+    flex-grow: 1;
+    margin-bottom: 0;
+  }
+}
