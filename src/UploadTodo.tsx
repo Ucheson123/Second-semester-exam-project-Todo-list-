@@ -1,12 +1,18 @@
 import React from "react";
 import { useForm } from "@tanstack/react-form";
 
-const UploadTodo = () => {
+export interface TodoFormValues {
+  name: string;
+  status: "TODO" | "DONE";
+}
+
+const UploadTodo: React.FC = () => {
   const form = useForm({
-    defaultValues: { name: "", status: "TODO" },
+    defaultValues: { name: "", status: "TODO" } as TodoFormValues,
+    
     onSubmit: async ({ value }) => {
       try {
-        const token = localStorage.getItem("token")
+        const token = localStorage.getItem("token");
         const response = await fetch("https://api.oluwasetemi.dev/tasks", {
           method: "POST",
           headers: {
@@ -15,11 +21,18 @@ const UploadTodo = () => {
           },
           body: JSON.stringify(value),
         });
+        
         if (response.ok) {
           form.reset();
+        } else {
+          console.error("Server responded with an error status:", response.status);
         }
       } catch (error) {
-        console.error("Failed to submit", error);
+        if (error instanceof Error) {
+          console.error("Failed to submit:", error.message);
+        } else {
+          console.error("An unknown error occurred during submission.");
+        }
       }
     },
   });
@@ -31,13 +44,14 @@ const UploadTodo = () => {
       </header>
       <form
         className="inline-form"
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
       >
         <div className="form-group">
+          {/* Because <TodoFormValues> has been used, if i change name="name" to name="title", TS will throw an error */}
           <form.Field
             name="name"
             validators={{
@@ -51,18 +65,20 @@ const UploadTodo = () => {
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => field.handleChange(e.target.value)}
                   placeholder="E.g., Finish React Exam"
                 />
-                {!field.state.meta.isValid && (
+                {/* i added a length check to ensure we only try to join errors if they exist */}
+                {!field.state.meta.isValid && field.state.meta.errors.length > 0 && (
                   <em className="error-text" role="alert">
-                    {field.state.meta.errors.join(",")}
+                    {field.state.meta.errors.join(", ")}
                   </em>
                 )}
               </>
             )}
           />
         </div>
+        
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (

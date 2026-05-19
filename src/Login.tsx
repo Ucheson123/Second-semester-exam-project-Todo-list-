@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+export interface LoginResponse {
+  accessToken: string;
+}
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  // typed form submission event.
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -22,13 +27,20 @@ const Login = () => {
         throw new Error("Invalid email or password");
       }
 
-      const data = await response.json();
-      console.log("SERVER LOGIN DATA:", data);  //i used this console.log to check the data coming from the server(I initially used "token" instead of "accessToken" and this helped me catch that error)
+      const data = (await response.json()) as LoginResponse;
+      
+      console.log("SERVER LOGIN DATA:", data);  
+      
       localStorage.setItem("token", data.accessToken); 
       navigate("/"); 
       
     } catch (err) {
-      setError(err.message);
+      // checked error type before accessing '.message'
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred during login.");
+      }
     }
   };
 
@@ -48,7 +60,7 @@ const Login = () => {
             type="email" 
             required 
             value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} 
           />
         </div>
         <div className="form-group">
@@ -58,14 +70,12 @@ const Login = () => {
             type="password" 
             required 
             value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
           />
         </div>
         <button type="submit">Login</button>
       </form>
       
-      <p>
-      </p>
       <div className="form-group">
         <p>Don't have an account? <Link to="/signup">Sign Up</Link></p>
       </div>
