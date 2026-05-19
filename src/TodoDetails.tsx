@@ -2,7 +2,15 @@ import React, { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
-const fetchTodo = async (id) => {
+interface Todo {
+  id: string | number;
+  name: string;
+  status: "TODO" | "DONE";
+  description?: string;
+  createdAt?: string;
+}
+
+const fetchTodo = async (id: string): Promise<Todo> => {
   const token = localStorage.getItem("token");
   const response = await fetch(`https://api.oluwasetemi.dev/tasks/${id}`, {
     headers: {
@@ -14,25 +22,23 @@ const fetchTodo = async (id) => {
   return response.json();
 };
 
-const TodoDetails = () => {
-  const { id } = useParams(); 
+const TodoDetails: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); 
   const navigate = useNavigate();
 
-  // 1. I grab 'refetch' so it can refresh the screen automatically after an update
-  const { data, isLoading, error, refetch } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery<Todo, Error>({
     queryKey: ["task", id],
-    queryFn: () => fetchTodo(id),
+    // i use 'id as string' because useParams technically thinks id could be undefined
+    queryFn: () => fetchTodo(id as string), 
+    enabled: !!id, // Only run the query if the id actually exists
   });
 
-  // 2. I Setup standard React State for our "Edit Mode
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState("");
-  const [editStatus, setEditStatus] = useState("TODO");
+  const [editStatus, setEditStatus] = useState<"TODO" | "DONE">("TODO");
   const [actionError, setActionError] = useState("");
 
-  // DELETE FUNCTION
   const handleDelete = async () => {
-    // I added a quick confirmation popup so users don't delete by accident
     const confirmDelete = window.confirm("Are you sure you want to delete this task?");
     if (!confirmDelete) return;
 
@@ -47,24 +53,25 @@ const TodoDetails = () => {
       
       if (!response.ok) throw new Error("Failed to delete task");
       
-      // Send them back to the Home page
       navigate("/"); 
     } catch (err) {
-      setActionError(err.message);
+      if (err instanceof Error) {
+        setActionError(err.message);
+      } else {
+        setActionError("An unknown error occurred");
+      }
     }
   };
 
-  // UPDATE FUNCTIONS
-  
-  // This runs when you click the "Edit Task" button
   const handleEditClick = () => {
-    setEditName(data.name);
-    setEditStatus(data.status);
-    setIsEditing(true); // Turns the text into a form
+    if (data) {
+      setEditName(data.name);
+      setEditStatus(data.status);
+      setIsEditing(true); 
+    }
   };
 
-  // This runs when you click "Save Changes
-  const handleUpdate = async (e) => {
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setActionError("");
 
@@ -84,11 +91,12 @@ const TodoDetails = () => {
         throw new Error(errorData.message || errorData.error || "Failed to update task");
       }
 
-      // This turns off edit mode and refresh the data on the screen
       setIsEditing(false);
       refetch(); 
     } catch (err) {
-      setActionError(err.message);
+      if (err instanceof Error) {
+        setActionError(err.message);
+      }
     }
   };
 
@@ -104,7 +112,6 @@ const TodoDetails = () => {
       <div className="details-card">
         {actionError && <p className="error-text">{actionError}</p>}
 
-        {/* IF THEY ARE EDITING: Show the update form */}
         {isEditing ? (
           <form onSubmit={handleUpdate}>
             <div className="form-group">
@@ -123,7 +130,7 @@ const TodoDetails = () => {
               <select 
                 id="edit-status"
                 value={editStatus} 
-                onChange={(e) => setEditStatus(e.target.value)}
+                onChange={(e) => setEditStatus(e.target.value as "TODO" | "DONE")}
               >
                 <option value="TODO">Pending</option>
                 <option value="DONE">Completed</option>
@@ -136,7 +143,6 @@ const TodoDetails = () => {
             </div>
           </form>
         ) : (
-          /* IF THEY ARE NOT EDITING: Show the normal details */
           <>
             <h1 className={data?.status === "DONE" ? "task-done-text" : "task-pending-text"}>
               {data?.name}
